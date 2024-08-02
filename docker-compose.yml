@@ -1,0 +1,81 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+      MYSQL_USER: product_user
+      MYSQL_PASSWORD: product_user_password
+      MYSQL_DATABASE: bankingapp
+    networks:
+      - webserver
+  spring-boot:
+    build:
+      context: ./spring-boot/
+      dockerfile: Dockerfile
+    expose:
+      - "8180"
+    environment:
+      DATASOURCE_URL: jdbc:mysql://mysql:3306/bankingapp?useSSL=false&allowPublicKeyRetrieval=true
+      DATABASE_USERNAME: product_user
+      DATABASE_PASSWORD: product_user_password
+      PORT: 8180
+    networks:
+      - webserver
+    depends_on:
+      - mysql
+
+
+  mongo:
+    image: mongo
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - webserver
+  nodejs:
+    build: ./nodejs
+    volumes:
+      - ./nodejs:/usr/src/app
+      - /usr/src/app/node_modules
+    expose:
+      - "8181"
+    environment:
+      NODE_ENV: development
+      DATABASE: mongodb://mongo:27017/local-idurar-erp-crp
+      JWT_SECRET: secret_key_1234
+      PORT: 8181
+    command: sh -c "npm run setup && npm run dev"
+    networks:
+      - webserver
+    depends_on:
+      - mongo
+
+      
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - spring-boot
+      - nodejs
+    networks:
+      - webserver
+    volumes:
+      - ./ssl-key/selfsigned.crt:/etc/ssl/certs/selfsigned.crt
+      - ./ssl-key/selfsigned.key:/etc/ssl/private/selfsigned.key
+      - ./angular/dist:/usr/share/nginx/angular_html
+      - ./react/dist/:/usr/share/nginx/react_html
+      - ./angular/angular.conf:/etc/nginx/conf.d/angular.conf
+      - ./react/react.conf:/etc/nginx/conf.d/react.conf
+volumes:
+  mongodb_data:
+
+
+networks:
+  webserver:
+#192.168.1.6 is supposed to be host's port which should be static all the time
