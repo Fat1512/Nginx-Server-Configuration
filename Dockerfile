@@ -18,7 +18,6 @@
 FROM nginx:1.25.1
 
 RUN rm /etc/nginx/conf.d/default.conf
-
 # COPY ./angular/angular.conf /etc/nginx/conf.d/angular.conf
 # COPY --from=angular /app/dist/ /usr/share/nginx/angular_html
 

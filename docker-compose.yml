@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   mysql:
+    container_name: mysql
     image: mysql:8.0
     ports:
       - "3307:3306"
@@ -29,6 +30,7 @@ services:
 
 
   mongo:
+    container_name: mongo
     image: mongo
     volumes:
       - mongodb_data:/data/db
@@ -54,17 +56,20 @@ services:
 
       
   nginx:
+    container_name: nginx
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "80:80"
       - "443:443"
+      - "1512:1512"
     depends_on:
       - spring-boot
       - nodejs
     networks:
-      - webserver
+      webserver:
+        ipv4_address: 172.18.0.100
     volumes:
       - ./ssl-key/selfsigned.crt:/etc/ssl/certs/selfsigned.crt
       - ./ssl-key/selfsigned.key:/etc/ssl/private/selfsigned.key
@@ -72,10 +77,18 @@ services:
       - ./react/dist/:/usr/share/nginx/react_html
       - ./angular/angular.conf:/etc/nginx/conf.d/angular.conf
       - ./react/react.conf:/etc/nginx/conf.d/react.conf
+      - ./status.conf:/etc/nginx/conf.d/status.conf
+      -  ~/Documents/nginx:/var/log/nginx
 volumes:
   mongodb_data:
 
 
 networks:
   webserver:
+    name: webserver
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
 #192.168.1.6 is supposed to be host's port which should be static all the time
