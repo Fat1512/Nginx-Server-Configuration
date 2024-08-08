@@ -54,7 +54,6 @@ services:
     depends_on:
       - mongo
 
-      
   nginx:
     container_name: nginx
     build:
@@ -63,21 +62,28 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "1512:1512"
     depends_on:
       - spring-boot
       - nodejs
+    expose:
+      - "1512"
     networks:
       webserver:
         ipv4_address: 172.18.0.100
     volumes:
       - ./ssl-key/selfsigned.crt:/etc/ssl/certs/selfsigned.crt
       - ./ssl-key/selfsigned.key:/etc/ssl/private/selfsigned.key
+      
       - ./angular/dist:/usr/share/nginx/angular_html
       - ./react/dist/:/usr/share/nginx/react_html
+
       - ./angular/angular.conf:/etc/nginx/conf.d/angular.conf
       - ./react/react.conf:/etc/nginx/conf.d/react.conf
+
+      - ./monitoring/grafana.conf:/etc/nginx/conf.d/grafana.conf
+      - ./monitoring/prometheus.conf:/etc/nginx/conf.d/prometheus.conf
       - ./status.conf:/etc/nginx/conf.d/status.conf
+
       -  ~/Documents/nginx:/var/log/nginx
 volumes:
   mongodb_data:
