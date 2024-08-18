@@ -12,6 +12,8 @@ services:
       MYSQL_DATABASE: bankingapp
     networks:
       - webserver
+
+
   spring-boot:
     build:
       context: ./spring-boot/
@@ -36,6 +38,9 @@ services:
       - mongodb_data:/data/db
     networks:
       - webserver
+
+
+      
   nodejs:
     build: ./nodejs
     volumes:
@@ -80,8 +85,8 @@ services:
       - ./angular/angular.conf:/etc/nginx/conf.d/angular.conf
       - ./react/react.conf:/etc/nginx/conf.d/react.conf
 
-      - ./monitoring/grafana.conf:/etc/nginx/conf.d/grafana.conf
       - ./monitoring/prometheus.conf:/etc/nginx/conf.d/prometheus.conf
+      - ./monitoring/grafana.conf:/etc/nginx/conf.d/grafana.conf
       - ./status.conf:/etc/nginx/conf.d/status.conf
 
       -  ~/Documents/nginx:/var/log/nginx
