@@ -5,7 +5,8 @@ import { Layout, Col, Divider, Typography } from 'antd';
 import AuthLayout from '@/layout/AuthLayout';
 import SideContent from './SideContent';
 
-import logo from '@/style/images/idurar-crm-erp.svg';
+// import logo from '@/style/images/idurar-crm-erp.svg';
+import logo from '@/style/images/logo1.png';
 
 const { Content } = Layout;
 const { Title } = Typography;

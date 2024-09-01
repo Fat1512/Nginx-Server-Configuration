@@ -85,7 +85,6 @@ services:
       - ./angular/angular.conf:/etc/nginx/conf.d/angular.conf
       - ./react/react.conf:/etc/nginx/conf.d/react.conf
 
-      - ./monitoring/prometheus.conf:/etc/nginx/conf.d/prometheus.conf
       - ./monitoring/grafana.conf:/etc/nginx/conf.d/grafana.conf
       - ./status.conf:/etc/nginx/conf.d/status.conf
 
@@ -102,4 +101,4 @@ networks:
       config:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
-#192.168.1.6 is supposed to be host's port which should be static all the time
+#127.0.0.1 is supposed to be host's address which should be static all the time
