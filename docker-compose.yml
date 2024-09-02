@@ -7,8 +7,8 @@ services:
       - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: P@ssw0rd
-      MYSQL_USER: product_user
-      MYSQL_PASSWORD: product_user_password
+      MYSQL_USER: banking_user
+      MYSQL_PASSWORD: banking_user_password
       MYSQL_DATABASE: bankingapp
     networks:
       - webserver
@@ -19,14 +19,17 @@ services:
       context: ./spring-boot/
       dockerfile: Dockerfile
     expose:
-      - "8180"
+      - "8000"
     environment:
       DATASOURCE_URL: jdbc:mysql://mysql:3306/bankingapp?useSSL=false&allowPublicKeyRetrieval=true
-      DATABASE_USERNAME: product_user
-      DATABASE_PASSWORD: product_user_password
-      PORT: 8180
+      DATABASE_USERNAME: banking_user
+      DATABASE_PASSWORD: banking_user_password
+      PORT: 8000
     networks:
       - webserver
+    deploy:
+      mode: replicated
+      replicas: 3
     depends_on:
       - mysql
 
@@ -34,30 +37,34 @@ services:
   mongo:
     container_name: mongo
     image: mongo
+    expose:
+      - "27017"
     volumes:
       - mongodb_data:/data/db
     networks:
       - webserver
 
 
-      
   nodejs:
     build: ./nodejs
     volumes:
       - ./nodejs:/usr/src/app
       - /usr/src/app/node_modules
     expose:
-      - "8181"
+      - "3000"
     environment:
       NODE_ENV: development
       DATABASE: mongodb://mongo:27017/local-idurar-erp-crp
-      JWT_SECRET: secret_key_1234
-      PORT: 8181
+      PORT: 3000
     command: sh -c "npm run setup && npm run dev"
     networks:
       - webserver
+    deploy:
+      mode: replicated
+      replicas: 3
     depends_on:
       - mongo
+      
 
   nginx:
     container_name: nginx
