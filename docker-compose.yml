@@ -95,6 +95,7 @@ services:
       - ./webserver/grafana.conf:/etc/nginx/conf.d/grafana.conf
       - ./webserver/prometheus.conf:/etc/nginx/conf.d/prometheus.conf
       - ./webserver/status.conf:/etc/nginx/conf.d/status.conf
+      - ./webserver/denied.conf:/etc/nginx/conf.d/denied.conf
 
       - ~/Documents/nginx:/var/log/nginx
 volumes:
@@ -110,3 +111,4 @@ networks:
     #     - subnet: 172.18.0.0/16
     #       gateway: 172.18.0.1
 #127.0.0.1 is supposed to be host's address which should be static all the time
+# SSL: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt
