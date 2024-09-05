@@ -20,12 +20,12 @@ services:
       context: ./spring-boot/
       dockerfile: Dockerfile
     expose:
-      - "8000"
+      - "8080"
     environment:
       DATASOURCE_URL: jdbc:mysql://mysql:3306/bankingapp?useSSL=false&allowPublicKeyRetrieval=true
       DATABASE_USERNAME: banking_user
       DATABASE_PASSWORD: banking_user_password
-      PORT: 8000
+      PORT: 8080
     networks:
       - webserver
     deploy:
@@ -70,10 +70,7 @@ services:
 
   nginx:
     container_name: nginx
-    # image: phat1512/nginx
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: phat1512/nginx
     ports:
       - "80:80"
       - "443:443"
@@ -92,13 +89,14 @@ services:
       - ./angular/dist:/usr/share/nginx/angular_html
       - ./react/dist/:/usr/share/nginx/react_html
 
-      - ./angular/angular.conf:/etc/nginx/conf.d/angular.conf
-      - ./react/react.conf:/etc/nginx/conf.d/react.conf
+      - ./webserver/angular.conf:/etc/nginx/conf.d/angular.conf
+      - ./webserver/react.conf:/etc/nginx/conf.d/react.conf
 
-      - ./monitoring/grafana.conf:/etc/nginx/conf.d/grafana.conf
-      - ./status.conf:/etc/nginx/conf.d/status.conf
+      - ./webserver/grafana.conf:/etc/nginx/conf.d/grafana.conf
+      - ./webserver/prometheus.conf:/etc/nginx/conf.d/prometheus.conf
+      - ./webserver/status.conf:/etc/nginx/conf.d/status.conf
 
-      -  ~/Documents/nginx:/var/log/nginx
+      - ~/Documents/nginx:/var/log/nginx
 volumes:
   mongodb_data:
 
