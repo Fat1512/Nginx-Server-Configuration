@@ -15,6 +15,7 @@ services:
 
 
   spring-boot:
+    image: phat1512/spring-boot
     build:
       context: ./spring-boot/
       dockerfile: Dockerfile
@@ -46,6 +47,7 @@ services:
 
 
   nodejs:
+    image: phat1512/nodejs
     build: ./nodejs
     volumes:
       - ./nodejs:/usr/src/app
@@ -64,10 +66,11 @@ services:
       replicas: 3
     depends_on:
       - mongo
-      
+
 
   nginx:
     container_name: nginx
+    # image: phat1512/nginx
     build:
       context: .
       dockerfile: Dockerfile
@@ -103,9 +106,9 @@ volumes:
 networks:
   webserver:
     name: webserver
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.18.0.0/16
-          gateway: 172.18.0.1
+    external: true
+    # ipam:
+    #   config:
+    #     - subnet: 172.18.0.0/16
+    #       gateway: 172.18.0.1
 #127.0.0.1 is supposed to be host's address which should be static all the time
